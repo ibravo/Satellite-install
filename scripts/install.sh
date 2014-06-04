@@ -15,6 +15,9 @@ katello-installer --foreman-authentication=true --capsule-tftp=true --capsule-tf
 # katello-installer --foreman-authentication=true --capsule-tftp=true --capsule-tftp-servername="192.168.2.150" --capsule-dhcp=true --capsule-dhcp-gateway="10.10.10.10" --capsule-dhcp-interface="eth1" --capsule-dhcp-range="10.10.10.20 10.10.10.200" --capsule-dns=true --capsule-dns-forwarders "8.8.8.8" --capsule-dns-interface="eth1" --capsule-dns-reverse="10.10.10.in-addr.arpa" -v
 # katello-installer --foreman-authentication=true --capsule-tftp=true --capsule-tftp-servername="192.168.2.150" --capsule-dhcp=true --capsule-dhcp-gateway="10.10.10.10" --capsule-dhcp-interface="eth1" --capsule-dhcp-range="10.10.10.20 10.10.10.200" -v
  
+yum -y downgrade puppet-3.5.1 puppet-server-3.5.1
+/etc/init.d/foreman-proxy restart
+
 ## Pending items
 echo Change SELINUX=permissive with 'vim /etc/selinux/config'
 echo vim /etc/hosts and add FQDN to list
