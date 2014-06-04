@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Start with a fresh install of CentOS
 yum install -y git ruby rubygems
