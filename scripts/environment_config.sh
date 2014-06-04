@@ -43,8 +43,24 @@ hammer -u admin -p changeme product set-sync-plan --name CentOS --organization T
 hammer -u admin -p changeme product set-sync-plan --name Foreman --organization Test_Cloud7 --sync-plan-id 1
 
 # Syncrhonize the repositories
+echo Sync Puppet
+hammer -u admin -p changeme repository synchronize --async --id 1
+echo Sync CentOS i386
+hammer -u admin -p changeme repository synchronize --async --id 2
+echo Sync CentOS x86
 hammer -u admin -p changeme repository synchronize --async --id 3
+echo Sync Foreman
 hammer -u admin -p changeme repository synchronize --async --id 4
-hammer -u admin -p changeme repository synchronize --async --id 5
+
+# Add Content Views
+echo Puppet Content View
+hammer -u admin -p changeme content-view create --description "Puppet View" --name "Puppet" --organization Test_Cloud7 --repository-ids 1
+echo CentOS Content View
+hammer -u admin -p changeme content-view create --description "CentOS Base View" --name "CentOS Base" --organization Test_Cloud7 --repository-ids 2,3
+echo Foreman Content view
+hammer -u admin -p changeme content-view create --description "Foreman View" --name "Foreman" --organization Test_Cloud7 --repository-ids 4
+
+
+
 
 
