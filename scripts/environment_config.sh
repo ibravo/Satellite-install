@@ -45,13 +45,17 @@ hammer -u admin -p changeme product set-sync-plan --name CentOS --organization T
 hammer -u admin -p changeme product set-sync-plan --name Foreman --organization Test_Cloud7 --sync-plan-id 1
 
 # Syncrhonize the repositories
-echo "$(date)  Start First Repo Synch" >> /root/Sat.install.log
+echo "$(date) Start Repo Synch" >> /root/Sat.install.log
+echo "$(date)   Sync Puppet" >> /root/Sat.install.log
 echo Sync Puppet
 hammer -u admin -p changeme repository synchronize --id 1
+echo "$(date)   Sync CentOS i386" >> /root/Sat.install.log
 echo Sync CentOS i386
 hammer -u admin -p changeme repository synchronize --id 2
+echo "$(date)   Sync CentOS x86" >> /root/Sat.install.log
 echo Sync CentOS x86
 hammer -u admin -p changeme repository synchronize --id 3
+echo "$(date)   Sync Foreman" >> /root/Sat.install.log
 echo Sync Foreman
 hammer -u admin -p changeme repository synchronize --id 4
 
