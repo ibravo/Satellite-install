@@ -16,6 +16,9 @@ yum -y localinstall http://repos.fedorapeople.org/repos/mcpierce/qpid-cpp/epel-6
 cp scl.repo /etc/yum.repos.d/scl.repo
 yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
 yum -y install foreman-selinux
+
+echo $(date) >> /root/Sat.install.log
+echo "Start Katello Package Download" >> /root/Sat.install.log
 ./setup.rb centos6 --skip-installer
 
 echo $(date) >> /root/Sat.install.log
