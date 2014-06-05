@@ -36,5 +36,5 @@ echo update /etc/foreman-proxy/settings.yml lookingfor dns_key to false
 echo afterwards /etc/init.d/foreman-proxy restart
 echo katello-restart
 
-/bin/bash /root/Satellite-install/scripts/second.sh
+/bin/bash /root/Satellite-install/scripts/environment_config.sh
 
