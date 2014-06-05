@@ -46,13 +46,13 @@ hammer -u admin -p changeme product set-sync-plan --name Foreman --organization 
 
 # Syncrhonize the repositories
 echo "$(date)  Start First Repo Synch" >> /root/Sat.install.log
-echo Sync Puppet
+echo Sync Puppet (sync)
 hammer -u admin -p changeme repository synchronize --id 1
-echo Sync CentOS i386
+echo Sync CentOS i386 (sync)
 hammer -u admin -p changeme repository synchronize --id 2
-echo Sync CentOS x86
+echo Sync CentOS x86 (sync)
 hammer -u admin -p changeme repository synchronize --id 3
-echo Sync Foreman
+echo Sync Foreman (sync)
 hammer -u admin -p changeme repository synchronize --id 4
 
 # Add Content Views
