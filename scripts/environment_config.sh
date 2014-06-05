@@ -115,6 +115,15 @@ echo Foreman View -> Test -> Prod
 hammer -u admin -p changeme content-view version promote --environment-id 3 --id 5
 hammer -u admin -p changeme content-view version promote --environment-id 4 --id 5
 
+echo Create Default Networks
+hammer -u admin -p changeme subnet create --name "Management Network" --network "10.10.10.0" --mask "255.255.255.0" --gateway "10.10.10.10" --dns-primary "10.10.10.10" --from "10.10.10.20" --to "10.10.10.50" --domain-ids 1 --dhcp-id 1 --dns-id 1 --tftp-id 1
+hammer -u admin -p changeme subnet create --name "Internal Network" --network "10.10.6.0" --mask "255.255.255.0" --gateway "10.10.6.10" --dns-primary "10.10.6.10" --from "10.10.6.20" --to "10.10.6.50" --domain-ids 1 --dhcp-id 1 --dns-id 1 --tftp-id 1
+
+wget http://downloads.theforeman.org/discovery/releases/latest/foreman-discovery-image-latest.el6.iso-vmlinuz 
+mv foreman-discovery-image-latest.el6.iso-vmlinuz /var/lib/tftpboot/boot/discovery-vmlinuz
+wget http://downloads.theforeman.org/discovery/releases/latest/foreman-discovery-image-latest.el6.iso-img
+mv foreman-discovery-image-latest.el6.iso-img /var/lib/tftpboot/boot/discovery-initrd.img
+chown -R foreman-proxy:foreman-proxy /var/lib/tftpboot/boot/*
 
 
 
