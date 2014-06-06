@@ -26,13 +26,21 @@ hammer -u admin -p changeme product create --description "Foreman Repos" --name 
 # Check Install
 hammer -u admin -p changeme product list --organization Test_Cloud7
 
+#---|---------|--------------|--------------|-----------
+#ID | NAME    | ORGANIZATION | REPOSITORIES | SYNC STATE
+#---|---------|--------------|--------------|-----------
+#2  | CentOS  | Test_Cloud7  | 0            | not_synced
+#3  | Foreman | Test_Cloud7  | 0            | not_synced
+#1  | Puppet  | Test_Cloud7  | 0            | not_synced
+#---|---------|--------------|--------------|-----------
+
 # Add Repos to Products
 echo "$(date) Start Defining Repos" >> /root/Sat.install.log
 # Puppet
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Puppet el 6.5 x86_64"  --product Puppet --publish-via-http true --url "http://yum.puppetlabs.com/el/6.5/products/x86_64" 
 # CentOS
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 x86_64"  --product Centos --publish-via-http true --url "http://mirror.centos.org/centos/6/os/x86_64" 
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 i386"  --product Centos --publish-via-http true --url "http://mirror.centos.org/centos/6/os/i386" 
+hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 x86_64"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/x86_64" 
+hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 i386"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/i386" 
 # Foreman
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Foreman Nightly"  --product Foreman --publish-via-http true --url "http://yum.theforeman.org/nightly/el6/x86_64/"
 
