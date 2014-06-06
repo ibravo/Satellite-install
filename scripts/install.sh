@@ -37,5 +37,4 @@ echo afterwards /etc/init.d/foreman-proxy restart
 echo katello-restart
 
 /bin/bash /root/Satellite-install/scripts/environment_config.sh
-/bin/bash /root/Satellite-install/scripts/environmnet_config.sh
 
