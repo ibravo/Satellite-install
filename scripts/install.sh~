@@ -3,22 +3,22 @@
 # Estimated times
 #-------------
 #Thu Jun  5 21:00:46 EDT 2014 Start Install git
-#Thu Jun  5 21:01:42 EDT 2014 Start Install foreman-selinux	5
-#Thu Jun  5 21:06:12 EDT 2014 Start Katello Package Download	11
-#Thu Jun  5 21:17:47 EDT 2014 Start Katello Installer		18
-#Thu Jun  5 21:35:45 EDT 2014 Finish Software Install		0
-#Thu Jun  5 21:35:45 EDT 2014 Start Software Configuration	
+#Thu Jun  5 21:01:42 EDT 2014 Start Install foreman-selinux
+#Thu Jun  5 21:06:12 EDT 2014 Start Katello Package Download
+#Thu Jun  5 21:17:47 EDT 2014 Start Katello Installer
+#Thu Jun  5 21:35:45 EDT 2014 Finish Software Install
+#Thu Jun  5 21:35:45 EDT 2014 Start Software Configuration
 #Thu Jun  5 21:36:30 EDT 2014 Start Defining Repos
 #Thu Jun  5 21:37:11 EDT 2014 Start Repo Synch
-#Thu Jun  5 21:37:11 EDT 2014   Sync Puppet			3 hrs
-#Fri Jun  6 00:26:03 EDT 2014   Sync CentOS i386		46
-#Fri Jun  6 01:12:28 EDT 2014   Sync CentOS x86			20
-#Fri Jun  6 01:32:57 EDT 2014   Sync Foreman			1
+#Thu Jun  5 21:37:11 EDT 2014   Sync Puppet
+#Fri Jun  6 00:26:03 EDT 2014   Sync CentOS i386
+#Fri Jun  6 01:12:28 EDT 2014   Sync CentOS x86
+#Fri Jun  6 01:32:57 EDT 2014   Sync Foreman
 #Fri Jun  6 01:33:38 EDT 2014 Start View Creation
-#Fri Jun  6 01:33:59 EDT 2014 Start Publish Views		16
-#Fri Jun  6 01:49:45 EDT 2014 Start Promote Views		24
+#Fri Jun  6 01:33:59 EDT 2014 Start Publish Views
+#Fri Jun  6 01:49:45 EDT 2014 Start Promote Views
 #Fri Jun  6 02:13:36 EDT 2014 Start Configure Networks
-#Fri Jun  6 02:13:42 EDT 2014 Start PXE Linux Download		3
+#Fri Jun  6 02:13:42 EDT 2014 Start PXE Linux Download
 #Fri Jun  6 02:16:09 EDT 2014 Finish Configuration
 
 # Start with a fresh install of CentOS

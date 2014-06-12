@@ -1,0 +1,59 @@
+#!/bin/bash
+# Configure Foreman Provisioning
+
+## Manage organizations
+
+# hammer> location list
+#---|--------
+#ID | NAME   
+#---|--------
+#2  | Default
+#---|--------
+
+
+#hammer -u admin -p changeme organization list
+#---|------------------|------------------|-------------------------------------
+#ID | NAME             | LABEL            | DESCRIPTION                         
+#---|------------------|------------------|-------------------------------------
+#1  | ACME_Corporation | ACME_Corporation | ACME_Corporation Organization       
+#3  | Test_Cloud7      | Test_Cloud7      | Cloud Servers in VM internal network
+#---|------------------|------------------|-------------------------------------
+
+# hammer> subnet list
+#---|--------------------|------------|--------------
+#ID | NAME               | NETWORK    | MASK         
+#---|--------------------|------------|--------------
+#1  | Management Network | 10.10.10.0 | 255.255.255.0
+#2  | Internal Network   | 10.10.6.0  | 255.255.255.0
+#---|--------------------|------------|--------------
+
+
+# Associate Organization to Locations
+hammer -u admin -p changeme location add-organization --id 2 --organization Test_Cloud7
+
+# Associate subnets to Location
+hammer> location add-subnet --name Default --subnet "Management Network"
+hammer> location add-subnet --name Default --subnet "Internal Network"
+
+# Associate Domains to Location
+hammer> location add-domain --domain-id 1 --name Default
+
+# Associate templates to Location
+# All
+# Associate Media to Location
+# All
+
+
+echo Manually perform the following tasks
+echo Infrastructure -> Subnets
+echo "Then for each Subnet, Organization -> Test_Cloud7"
+echo Infrastructure -> Domains -> Organization -> Test_Cloud7
+echo Manage Organizations -> Templates -> All templates
+
+
+
+hammer -u admin -p changeme organization add-subnet --name Test_Cloud7 --subnet "Management Network"
+hammer -u admin -p changeme organization add-subnet --name Test_Cloud7 --subnet "Internal Network"
+
+
+

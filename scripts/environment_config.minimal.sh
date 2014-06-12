@@ -25,9 +25,7 @@ hammer -u admin -p changeme product list --organization Test_Cloud7
 #---|---------|--------------|--------------|-----------
 #ID | NAME    | ORGANIZATION | REPOSITORIES | SYNC STATE
 #---|---------|--------------|--------------|-----------
-#2  | CentOS  | Test_Cloud7  | 0            | not_synced
-#3  | Foreman | Test_Cloud7  | 0            | not_synced
-#1  | Puppet  | Test_Cloud7  | 0            | not_synced
+#1  | CentOS  | Test_Cloud7  | 0            | not_synced
 #---|---------|--------------|--------------|-----------
 
 # Add Repos to Products
@@ -41,50 +39,37 @@ hammer -u admin -p changeme sync-plan create --description "Daily Sync 03:00 AM"
 # Assign Sync Plan to Products
 hammer -u admin -p changeme product set-sync-plan --name CentOS --organization Test_Cloud7 --sync-plan-id 1
 
+hammer -u admin -p changeme repository list --organization Test_Cloud7 
+#---|-----------------|-------------
+#ID | NAME            | CONTENT TYPE
+#---|-----------------|-------------
+#1  | Centos 6 x86_64 | yum         
+#---|-----------------|-------------
+
 # Syncrhonize the repositories
 echo "$(date) Start Repo Synch" >> /root/Sat.install.log
-#echo "$(date)   Sync Puppet" >> /root/Sat.install.log
-#echo Sync Puppet
-#hammer -u admin -p changeme repository synchronize --id 1
-#echo "$(date)   Sync CentOS i386" >> /root/Sat.install.log
-#echo Sync CentOS i386
-#hammer -u admin -p changeme repository synchronize --id 2
 echo "$(date)   Sync CentOS x86" >> /root/Sat.install.log
 echo Sync CentOS x86
 hammer -u admin -p changeme repository synchronize --id 1
-#echo "$(date)   Sync Foreman" >> /root/Sat.install.log
-#echo Sync Foreman
-#hammer -u admin -p changeme repository synchronize --id 4
 
 # Add Content Views
 echo "$(date) Start View Creation" >> /root/Sat.install.log
-#echo Puppet Content View
-#hammer -u admin -p changeme content-view create --description "Puppet View" --name "Puppet" --organization Test_Cloud7 --repository-ids 1
 echo CentOS Content View
-hammer -u admin -p changeme content-view create --description "CentOS Base View" --name "CentOS Base" --organization Test_Cloud7 --repository-ids 2
-#hammer -u admin -p changeme content-view create --description "CentOS Base View" --name "CentOS Base" --organization Test_Cloud7 --repository-ids 2,3
-#echo Foreman Content view
-#hammer -u admin -p changeme content-view create --description "Foreman View" --name "Foreman" --organization Test_Cloud7 --repository-ids 4
+hammer -u admin -p changeme content-view create --description "CentOS Base View" --name "CentOS Base" --organization Test_Cloud7 --repository-ids 1
 
 # Create a Version the Views
 #
 # hammer -u admin -p changeme content-view list --organization Test_Cloud7
-#----------------|---------------------------|---------------------------|-----------|---------------
-#CONTENT VIEW ID | NAME                      | LABEL                     | COMPOSITE | REPOSITORY IDS
-#----------------|---------------------------|---------------------------|-----------|---------------
-#3               | Puppet                    | Puppet                    |           | 1             
-#2               | Default Organization View | Default_Organization_View |           |               
-#5               | Foreman                   | Foreman                   |           | 4             
-#4               | CentOS Base               | CentOS_Base               |           | 3, 2          
-#----------------|---------------------------|---------------------------|-----------|---------------
+----------------|---------------------------|---------------------------|-----------|---------------
+CONTENT VIEW ID | NAME                      | LABEL                     | COMPOSITE | REPOSITORY IDS
+----------------|---------------------------|---------------------------|-----------|---------------
+3               | CentOS Base               | CentOS_Base               |           | 1             
+2               | Default Organization View | Default_Organization_View |           |               
+----------------|---------------------------|---------------------------|-----------|---------------
 
 echo "$(date) Start Publish Views" >> /root/Sat.install.log
-#echo Puppet Content View Publish version 1
-#hammer -u admin -p changeme content-view publish --id 3
 echo CentOS Content View Publish version 1
-hammer -u admin -p changeme content-view publish --id 4
-#echo Foreman Content view Publish version 1
-#hammer -u admin -p changeme content-view publish --id 5
+hammer -u admin -p changeme content-view publish --id 3
 
 # Promote the View
 # hammer -u admin -p changeme lifecycle-environment list --organization Test_Cloud7
@@ -104,15 +89,9 @@ hammer -u admin -p changeme content-view publish --id 4
 #---|----------|---------|-----------------|-------------------|-------------------
 
 echo "$(date) Start Promote Views" >> /root/Sat.install.log
-#echo Puppet View -> Test -> Prod
-#hammer -u admin -p changeme content-view version promote --environment-id 3 --id 3
-#hammer -u admin -p changeme content-view version promote --environment-id 4 --id 3
 echo CentOS View -> Test -> Prod
-hammer -u admin -p changeme content-view version promote --environment-id 3 --id 4
-hammer -u admin -p changeme content-view version promote --environment-id 4 --id 4
-#echo Foreman View -> Test -> Prod
-#hammer -u admin -p changeme content-view version promote --environment-id 3 --id 5
-#hammer -u admin -p changeme content-view version promote --environment-id 4 --id 5
+hammer -u admin -p changeme content-view version promote --environment-id 3 --id 3
+hammer -u admin -p changeme content-view version promote --environment-id 4 --id 3
 
 echo "$(date) Start Configure Networks" >> /root/Sat.install.log
 echo Create Default Networks
