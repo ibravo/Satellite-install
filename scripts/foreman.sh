@@ -56,6 +56,9 @@ echo -------------
 echo Manage Organizations -> Templates -> All templates
 echo -------------
 echo Test VM: 00:50:56:83:DA:EF
+echo Administer -> Settings -> Discover:
+echo Default and Test_Cloud7
+
 
 pause
 
