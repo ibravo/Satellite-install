@@ -36,8 +36,12 @@ cp scl.repo /etc/yum.repos.d/scl.repo
 yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
 yum -y install foreman-selinux
 
+
 echo "$(date) Start Katello Package Download" >> /root/Sat.install.log
 ./setup.rb centos6 --skip-installer
+echo If you get errors with missing qpid, try the katello-pulp repo
+echo at http://fedorapeople.org/groups/katello/releases/yum/katello-pulp/RHEL/6Server/x86_64/
+ 
 
 echo "$(date) Start Katello Installer" >> /root/Sat.install.log
 
