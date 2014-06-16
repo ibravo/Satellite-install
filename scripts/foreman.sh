@@ -32,11 +32,11 @@
 hammer -u admin -p changeme location add-organization --id 2 --organization Test_Cloud7
 
 # Associate subnets to Location
-hammer> location add-subnet --name Default --subnet "Management Network"
-hammer> location add-subnet --name Default --subnet "Internal Network"
+hammer -u admin -p changeme location add-subnet --name Default --subnet "Management Network"
+hammer -u admin -p changeme location add-subnet --name Default --subnet "Internal Network"
 
 # Associate Domains to Location
-hammer> location add-domain --domain-id 1 --name Default
+hammer -u admin -p changeme location add-domain --domain-id 1 --name Default
 
 # Associate templates to Location
 # All
@@ -79,7 +79,7 @@ pause
 #---|------------------------------|----------
 
 # Add Partition table to CentOS
-hammer> os add-ptable --id 1 --ptable-id 7
+hammer -u admin -p changeme os add-ptable --id 1 --ptable-id 7
 
 #hammer> template list
 #---|-------------------------------|----------
@@ -133,11 +133,11 @@ hammer> os add-ptable --id 1 --ptable-id 7
 #---|------------------------------------|----------
 
 # Add kickstart file to CentOS
-hammer> os add-config-template --config-template-id 1 --id 1
-hammer> os set-default-template --config-template-id 1 --id 1
+hammer -u admin -p changeme os add-config-template --config-template-id 1 --id 1
+hammer -u admin -p changeme os set-default-template --config-template-id 1 --id 1
 
 # Add CenOS Production media to CentOS
-hammer> location add-medium --id 2 --medium-id 14
+hammer -u admin -p changeme location add-medium --id 2 --medium-id 14
 
 echo Test VM: 00:50:56:83:DA:EF
 echo Hosts -> Provisioning Templates -> Kickstart Default -> Association -> Select CentOS.

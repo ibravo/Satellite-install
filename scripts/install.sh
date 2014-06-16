@@ -57,9 +57,7 @@ echo "$(date) Finish Software Install" >> /root/Sat.install.log
 ## Pending items
 echo Change SELINUX=permissive with 'vim /etc/selinux/config'
 echo vim /etc/hosts and add FQDN to list
-echo update /etc/foreman-proxy/settings.yml lookingfor dns_key to false
-echo afterwards /etc/init.d/foreman-proxy restart
-echo katello-restart
 
-echo /bin/bash /root/Satellite-install/scripts/environment_config.sh
+
+/bin/bash /root/Satellite-install/scripts/environment_config.sh
 

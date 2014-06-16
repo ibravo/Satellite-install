@@ -150,6 +150,6 @@ echo "$(date) Finish Configuration" >> /root/Sat.install.log
 echo "-------------" >> /root/Sat.install.log
 
 
-
+/bin/bash /root/Satellite-install/scripts/foreman.sh
 
 
