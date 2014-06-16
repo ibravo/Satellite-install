@@ -52,6 +52,16 @@ hammer -u admin -p changeme product set-sync-plan --name Puppet --organization T
 hammer -u admin -p changeme product set-sync-plan --name CentOS --organization Test_Cloud7 --sync-plan-id 1
 hammer -u admin -p changeme product set-sync-plan --name Foreman --organization Test_Cloud7 --sync-plan-id 1
 
+#hammer -u admin -p changeme repository list --organization Test_Cloud7
+#---|----------------------|-------------
+#ID | NAME                 | CONTENT TYPE
+#---|----------------------|-------------
+#3  | Centos 6 i386        | yum         
+#2  | Centos 6 x86_64      | yum         
+#4  | Foreman Nightly      | yum         
+#1  | Puppet el 6.5 x86_64 | yum         
+#---|----------------------|-------------
+
 # Syncrhonize the repositories
 echo "$(date) Start Repo Synch" >> /root/Sat.install.log
 echo "$(date)   Sync Puppet" >> /root/Sat.install.log

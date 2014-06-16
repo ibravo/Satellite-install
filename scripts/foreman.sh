@@ -55,9 +55,9 @@ echo Infrastructure -> Domains -> Organization -> Test_Cloud7
 echo -------------
 echo Manage Organizations -> Templates -> All templates
 echo -------------
-echo Test VM: 00:50:56:83:DA:EF
-echo Administer -> Settings -> Discover:
-echo Default and Test_Cloud7
+echo Administer -> Settings -> Discover
+echo discovery_location => Default and discovery_organization => Test_Cloud7
+
 
 
 pause
@@ -136,6 +136,15 @@ hammer> os add-ptable --id 1 --ptable-id 7
 hammer> os add-config-template --config-template-id 1 --id 1
 hammer> os set-default-template --config-template-id 1 --id 1
 
+# Add CenOS Production media to CentOS
+hammer> location add-medium --id 2 --medium-id 14
+
+echo Test VM: 00:50:56:83:DA:EF
+echo Hosts -> Provisioning Templates -> Kickstart Default -> Association -> Select CentOS.
+echo Add instalation media to Default Location
+echo Hosts -> Provisioning Templates -> Kickstart default PXELInux -> Association -> Select CentOS
+echo Hosts -> Operating Systems -> CentOS -> Templates -> provision -> kickstart default
+echo Update the DNS configuration files.
 
 
 
