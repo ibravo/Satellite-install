@@ -145,6 +145,9 @@ echo Add instalation media to Default Location
 echo Hosts -> Provisioning Templates -> Kickstart default PXELInux -> Association -> Select CentOS
 echo Hosts -> Operating Systems -> CentOS -> Templates -> provision -> kickstart default
 echo Update the DNS configuration files.
+echo Update resolv.conf (10.10.10.10)
+echo Update dhcpd.conf 
+echo Update zones.conf
 
 
 
