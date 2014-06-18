@@ -159,6 +159,7 @@ echo Update dhcpd.conf
 echo Update zones.conf
 echo Ensure that /var/named/dynamic is chown -R named:named
 echo restart dhcp -> service names restart   service foreman-proxy restart
+echo Add provisioning templates to Test_Cloud7 / Default and to OS!
 
 
 
