@@ -57,10 +57,16 @@ echo Manage Organizations -> Templates -> All templates
 echo -------------
 echo Administer -> Settings -> Discover
 echo discovery_location => Default and discovery_organization => Test_Cloud7
+echo -----------
+echo Execute these commands
+echo hammer -u admin -p changeme os add-ptable --id 1 --ptable-id 7
+echo hammer -u admin -p changeme os add-config-template --config-template-id 1 --id 1
+echo hammer -u admin -p changeme os set-default-template --config-template-id 1 --id 1
+echo hammer -u admin -p changeme location add-medium --id 2 --medium-id 14
 
 
 
-pause
+#pause
 
 #hammer> partition-table list
 #---|------------------------------|----------
@@ -79,8 +85,9 @@ pause
 #---|------------------------------|----------
 
 # Add Partition table to CentOS
-hammer -u admin -p changeme os add-ptable --id 1 --ptable-id 7
-
+##################################################################
+# hammer -u admin -p changeme os add-ptable --id 1 --ptable-id 7
+##################################################################
 #hammer> template list
 #---|-------------------------------|----------
 #ID | NAME                          | TYPE     
@@ -132,12 +139,14 @@ hammer -u admin -p changeme os add-ptable --id 1 --ptable-id 7
 #26 | WAIK default PXELinux              | PXELinux 
 #---|------------------------------------|----------
 
+#############################################################################
 # Add kickstart file to CentOS
-hammer -u admin -p changeme os add-config-template --config-template-id 1 --id 1
-hammer -u admin -p changeme os set-default-template --config-template-id 1 --id 1
+#hammer -u admin -p changeme os add-config-template --config-template-id 1 --id 1
+#hammer -u admin -p changeme os set-default-template --config-template-id 1 --id 1
 
 # Add CenOS Production media to CentOS
-hammer -u admin -p changeme location add-medium --id 2 --medium-id 14
+#hammer -u admin -p changeme location add-medium --id 2 --medium-id 14
+##############################################################################
 
 echo Test VM: 00:50:56:83:DA:EF
 echo Hosts -> Provisioning Templates -> Kickstart Default -> Association -> Select CentOS.
@@ -149,6 +158,7 @@ echo Update resolv.conf (10.10.10.10)
 echo Update dhcpd.conf 
 echo Update zones.conf
 echo Ensure that /var/named/dynamic is chown -R named:named
+echo restart dhcp -> service names restart   service foreman-proxy restart
 
 
 
