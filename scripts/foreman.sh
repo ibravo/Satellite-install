@@ -148,7 +148,7 @@ echo Update the DNS configuration files.
 echo Update resolv.conf (10.10.10.10)
 echo Update dhcpd.conf 
 echo Update zones.conf
-
+echo Ensure that /var/named/dynamic is chown -R named:named
 
 
 
