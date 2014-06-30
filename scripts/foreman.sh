@@ -163,4 +163,7 @@ echo Add provisioning templates to Test_Cloud7 / Default and to OS!
 echo Create a new Activation Key for PROD and CentOS Full environment
 
 
-
+echo   Install new subscription manager repo
+echo # wget -O /etc/yum.repos.d/subscription-manager.repo \
+echo     http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-subscription-manager.repo
+     
