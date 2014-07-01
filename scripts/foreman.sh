@@ -181,4 +181,16 @@ hammer -u admin -p changeme repository create --organization Test_Cloud7 --conte
 # service pulp_workers start
 # service pulp_resource_manager start
 
+# Assign Sync Plan to Products
+hammer -u admin -p changeme product set-sync-plan --name Subscription  --organization Test_Cloud7 --sync-plan-id 1
+hammer -u admin -p changeme product set-sync-plan --name Epel --organization Test_Cloud7 --sync-plan-id 1
+
+# Syncrhonize the repositories
+echo "$(date) Start Repo Synch" >> /root/Sat.install.log
+echo "$(date)   Sync Subscription " >> /root/Sat.install.log
+echo Sync Subscription
+hammer -u admin -p changeme repository synchronize --id 5
+echo "$(date)   Sync Epel " >> /root/Sat.install.log
+echo Sync Epel
+hammer -u admin -p changeme repository synchronize --id 6
 
