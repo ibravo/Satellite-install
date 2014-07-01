@@ -175,4 +175,10 @@ hammer -u admin -p changeme repository create --organization Test_Cloud7 --conte
 # EPEL
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "EPEL x86_64"  --product Epel --publish-via-http true --url "http://dl.fedoraproject.org/pub/epel/6/x86_64" 
 
+# After a reboot, some services from pult are not started correctly. To correct, run the following commands:
+#
+# service pulp_celerybeat start
+# service pulp_workers start
+# service pulp_resource_manager start
+
 
