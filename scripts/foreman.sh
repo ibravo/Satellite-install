@@ -162,18 +162,19 @@ echo restart dhcp -> service names restart   service foreman-proxy restart
 echo Add provisioning templates to Test_Cloud7 / Default and to OS!
 echo Create a new Activation Key for PROD and CentOS Full environment
 
-
-#########################################################
+######################################################################
+#DONE
 # Create New Product: Subscription
-hammer -u admin -p changeme product create --description "Subscription Repos" --name Subscription --organization Test_Cloud7
+#hammer -u admin -p changeme product create --description "Subscription Repos" --name Subscription --organization Test_Cloud7
 # Create New Product: EPEL
-hammer -u admin -p changeme product create --description "EPEL Repos" --name Epel --organization Test_Cloud7
+#hammer -u admin -p changeme product create --description "EPEL Repos" --name Epel --organization Test_Cloud7
 
 # Add Repos to Products
 # Subscription
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Subs x86_64"  --product Subscription --publish-via-http true --url "http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64" 
+#hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Subs x86_64"  --product Subscription --publish-via-http true --url "http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64" 
 # EPEL
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "EPEL x86_64"  --product Epel --publish-via-http true --url "http://dl.fedoraproject.org/pub/epel/6/x86_64" 
+#hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "EPEL x86_64"  --product Epel --publish-via-http true --url "http://dl.fedoraproject.org/pub/epel/6/x86_64" 
+
 
 # After a reboot, some services from pult are not started correctly. To correct, run the following commands:
 #
@@ -182,8 +183,8 @@ hammer -u admin -p changeme repository create --organization Test_Cloud7 --conte
 # service pulp_resource_manager start
 
 # Assign Sync Plan to Products
-hammer -u admin -p changeme product set-sync-plan --name Subscription  --organization Test_Cloud7 --sync-plan-id 1
-hammer -u admin -p changeme product set-sync-plan --name Epel --organization Test_Cloud7 --sync-plan-id 1
+#hammer -u admin -p changeme product set-sync-plan --name Subscription  --organization Test_Cloud7 --sync-plan-id 1
+#hammer -u admin -p changeme product set-sync-plan --name Epel --organization Test_Cloud7 --sync-plan-id 1
 
 # Syncrhonize the repositories
 echo "$(date) Start Repo Synch" >> /root/Sat.install.log
