@@ -6,6 +6,6 @@ Install Satellite (Foreman-Katello-Pulp) in one server
 
 To intstall, type the following commands on a newly provisioned box:
 
-1     # git clone https://github.com/ibravo/Satellite-install.git
-2     # cd Satellite-install/scripts
-3     # ./install.sh
+    # git clone https://github.com/ibravo/Satellite-install.git
+    # cd Satellite-install/scripts
+    # ./install.sh
