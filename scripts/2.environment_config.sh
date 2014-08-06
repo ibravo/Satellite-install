@@ -5,8 +5,9 @@
 
 
 echo "$(date) Start Software Configuration" >> /root/Sat.install.log
-# Add Organization
+# Add Organization & Location
 hammer -u admin -p changeme organization create --name Test_Cloud7 --description "Cloud Servers in VM internal network"
+hammer -u admin -p changeme location create --name "McLean"
 
 # Add Environments
 # Library -> Test -> Prod
@@ -31,13 +32,15 @@ hammer -u admin -p changeme product create --description "EPEL Repos" --name Epe
 # Check Install
 hammer -u admin -p changeme product list --organization Test_Cloud7
 
-#---|---------|--------------|--------------|-----------
-#ID | NAME    | ORGANIZATION | REPOSITORIES | SYNC STATE
-#---|---------|--------------|--------------|-----------
-#2  | CentOS  | Test_Cloud7  | 0            | not_synced
-#3  | Foreman | Test_Cloud7  | 0            | not_synced
-#1  | Puppet  | Test_Cloud7  | 0            | not_synced
-#---|---------|--------------|--------------|-----------
+#---|--------------|--------------------|--------------|--------------|-----------
+#ID | NAME         | DESCRIPTION        | ORGANIZATION | REPOSITORIES | SYNC STATE
+#---|--------------|--------------------|--------------|--------------|-----------
+#1  | Puppet       | Puppet RPMS Repos  | Test_Cloud7  | 0            | not_synced
+#2  | CentOS       | CentOS Repos       | Test_Cloud7  | 0            | not_synced
+#3  | Foreman      | Foreman Repos      | Test_Cloud7  | 0            | not_synced
+#4  | Subscription | Subscription Repos | Test_Cloud7  | 0            | not_synced
+#5  | Epel         | EPEL Repos         | Test_Cloud7  | 0            | not_synced
+#---|--------------|--------------------|--------------|--------------|-----------
 
 # Add Repos to Products
 echo "$(date) Start Defining Repos" >> /root/Sat.install.log
@@ -62,17 +65,21 @@ hammer -u admin -p changeme product set-sync-plan --name Puppet --organization T
 hammer -u admin -p changeme product set-sync-plan --name CentOS --organization Test_Cloud7 --sync-plan-id 1
 hammer -u admin -p changeme product set-sync-plan --name Foreman --organization Test_Cloud7 --sync-plan-id 1
 hammer -u admin -p changeme product set-sync-plan --name Subscription --organization Test_Cloud7 --sync-plan-id 1
-hammer -u admin -p changeme product set-sync-plan --name EPEL --organization Test_Cloud7 --sync-plan-id 1
+hammer -u admin -p changeme product set-sync-plan --name Epel --organization Test_Cloud7 --sync-plan-id 1
 
 #hammer -u admin -p changeme repository list --organization Test_Cloud7
-#---|----------------------|-------------
-#ID | NAME                 | CONTENT TYPE
-#---|----------------------|-------------
-#3  | Centos 6 i386        | yum         
-#2  | Centos 6 x86_64      | yum         
-#4  | Foreman Nightly      | yum         
-#1  | Puppet el 6.5 x86_64 | yum         
-#---|----------------------|-------------
+
+#---|----------------------|--------------|--------------|---------------------------------------------------------------------------------
+#ID | NAME                 | PRODUCT      | CONTENT TYPE | URL                                                                             
+#---|----------------------|--------------|--------------|---------------------------------------------------------------------------------
+#1  | Puppet el 6.5 x86_64 | Puppet       | yum          | http://yum.puppetlabs.com/el/6.5/products/x86_64                                
+#2  | Centos 6 x86_64      | CentOS       | yum          | http://mirror.centos.org/centos/6/os/x86_64                                     
+#3  | Centos 6 i386        | CentOS       | yum          | http://mirror.centos.org/centos/6/os/i386                                       
+#4  | Foreman Nightly      | Foreman      | yum          | http://yum.theforeman.org/nightly/el6/x86_64/                                   
+#5  | Subs x86_64          | Subscription | yum          | http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64
+#6  | EPEL x86_64          | Epel         | yum          | http://dl.fedoraproject.org/pub/epel/6/x86_64                                   
+#---|----------------------|--------------|--------------|---------------------------------------------------------------------------------
+
 
 # Syncrhonize the repositories
 echo "$(date) Start Repo Synch" >> /root/Sat.install.log
