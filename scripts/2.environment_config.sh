@@ -103,7 +103,7 @@ echo Sync Epel
 hammer -u admin -p changeme repository synchronize --id 6
 
 
-
+exit
 # Add Content Views
 echo "$(date) Start View Creation" >> /root/Sat.install.log
 echo Puppet Content View

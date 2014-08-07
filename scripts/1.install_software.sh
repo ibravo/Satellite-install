@@ -23,9 +23,14 @@
 
 # Start with a fresh install of CentOS
 echo "-------------" >> /root/Sat.install.log
+echo "$(date) Update CentOS" >> /root/Sat.install.log
+
+yum -y update
+
 echo "$(date) Start Install git" >> /root/Sat.install.log
 
 yum install -y git ruby rubygems
+
 git clone https://github.com/Katello/katello-deploy.git
 cd katello-deploy
 

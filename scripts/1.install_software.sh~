@@ -34,7 +34,7 @@ echo "$(date) Start Install foreman-selinux" >> /root/Sat.install.log
 # workaround bug 5961
 #yum -y localinstall http://repos.fedorapeople.org/repos/mcpierce/qpid-cpp/epel-6/noarch/qpid-cpp-release-6-1.el6.noarch.rpm
 #cp scl.repo /etc/yum.repos.d/scl.repo
-#yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
+yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
 #yum -y install foreman-selinux
 
 
@@ -48,7 +48,7 @@ echo "$(date) Start Katello Installer" >> /root/Sat.install.log
 
 service iptables stop
 
-katello-installer --foreman-authentication=true --capsule-tftp=true --capsule-tftp-servername="10.10.10.10" --capsule-dhcp=true --capsule-dhcp-gateway="10.10.10.10" --capsule-dhcp-interface="eth1" --capsule-dhcp-range="10.10.10.20 10.10.10.200" --capsule-dns=true --capsule-dns-forwarders "10.10.10.10" --capsule-dns-interface="eth1" --capsule-dns-reverse="10.10.10.in-addr.arpa" --capsule-dns-zone "hq.ltg" 
+katello-installer --foreman-admin-password="changeme" --foreman-authentication=true --capsule-tftp=true --capsule-tftp-servername="10.10.10.10" --capsule-dhcp=true --capsule-dhcp-gateway="10.10.10.10" --capsule-dhcp-interface="eth1" --capsule-dhcp-range="10.10.10.20 10.10.10.200" --capsule-dns=true --capsule-dns-forwarders "10.10.10.10" --capsule-dns-interface="eth1" --capsule-dns-reverse="10.10.10.in-addr.arpa" --capsule-dns-zone "hq.ltg" 
  
 # yum -y downgrade puppet-3.5.1 puppet-server-3.5.1
 # /etc/init.d/foreman-proxy restart
