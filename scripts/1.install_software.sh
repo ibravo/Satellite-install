@@ -39,7 +39,7 @@ echo "$(date) Start Install foreman-selinux" >> /root/Sat.install.log
 # workaround bug 5961
 #yum -y localinstall http://repos.fedorapeople.org/repos/mcpierce/qpid-cpp/epel-6/noarch/qpid-cpp-release-6-1.el6.noarch.rpm
 #cp scl.repo /etc/yum.repos.d/scl.repo
-yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
+#yum -y localinstall http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
 #yum -y install foreman-selinux
 
 
