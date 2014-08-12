@@ -17,6 +17,14 @@ hammer -u admin -p changeme lifecycle-environment create --description Productio
 hammer -u admin -p changeme organization info --name Test_Cloud7
 hammer -u admin -p changeme lifecycle-environment list --organization Test_Cloud7
 
+#---|---------|--------
+#ID | NAME    | PRIOR  
+#---|---------|--------
+#1  | Library |        
+#2  | Test    | Library
+#3  | Prod    | Test   
+#---|---------|--------
+
 # Add Products
 # Puppet
 hammer -u admin -p changeme product create --description "Puppet RPMS Repos" --name Puppet --organization Test_Cloud7
