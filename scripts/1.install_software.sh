@@ -25,14 +25,15 @@
 echo "-------------" >> /root/Sat.install.log
 echo "$(date) Update CentOS" >> /root/Sat.install.log
 
+# Install mongodb repo
+#cp ./../configs/yum.repos.d/mongodb.repo /etc/yum.repos.d/mongodb.repo
+cp ./../configs/yum.repos.d/mongodb.repo /etc/yum.repos.d/mongodb.repo
+
 yum -y update
 
 echo "$(date) Start Install git" >> /root/Sat.install.log
 
 yum install -y git ruby rubygems
-
-# Install mongodb repo
-cp ./../configs/yum.repos.d/mongodb.repo /etc/yum.repos.d/mongodb.repo
 
 git clone https://github.com/Katello/katello-deploy.git
 cd katello-deploy
