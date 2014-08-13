@@ -33,7 +33,7 @@ yum -y update
 
 echo "$(date) Start Install git" >> /root/Sat.install.log
 
-yum install -y git ruby rubygems
+yum install -y git ruby rubygems mongodb-org 
 
 git clone https://github.com/Katello/katello-deploy.git
 cd katello-deploy
