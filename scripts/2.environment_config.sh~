@@ -17,6 +17,14 @@ hammer -u admin -p changeme lifecycle-environment create --description Productio
 hammer -u admin -p changeme organization info --name Test_Cloud7
 hammer -u admin -p changeme lifecycle-environment list --organization Test_Cloud7
 
+#---|---------|--------
+#ID | NAME    | PRIOR  
+#---|---------|--------
+#1  | Library |        
+#2  | Test    | Library
+#3  | Prod    | Test   
+#---|---------|--------
+
 # Add Products
 # Puppet
 hammer -u admin -p changeme product create --description "Puppet RPMS Repos" --name Puppet --organization Test_Cloud7
@@ -103,27 +111,38 @@ echo Sync Epel
 hammer -u admin -p changeme repository synchronize --id 6
 
 
-exit
 # Add Content Views
 echo "$(date) Start View Creation" >> /root/Sat.install.log
 echo Puppet Content View
 hammer -u admin -p changeme content-view create --description "Puppet View" --name "Puppet" --organization Test_Cloud7 --repository-ids 1
+hammer -u admin -p changeme content-view add-repository --id 3 --organization Test_Cloud7 --repository-id 1
 echo CentOS Content View
 hammer -u admin -p changeme content-view create --description "CentOS Base View" --name "CentOS Base" --organization Test_Cloud7 --repository-ids 2,3
+hammer -u admin -p changeme content-view add-repository --id 4 --organization Test_Cloud7 --repository-id 2
+hammer -u admin -p changeme content-view add-repository --id 4 --organization Test_Cloud7 --repository-id 3
 echo Foreman Content view
 hammer -u admin -p changeme content-view create --description "Foreman View" --name "Foreman" --organization Test_Cloud7 --repository-ids 4
+hammer -u admin -p changeme content-view add-repository --id 5 --organization Test_Cloud7 --repository-id 4
+echo Subscription Management Content view
+hammer -u admin -p changeme content-view create --description "Sub Mgmt View" --name "Subscription" --organization Test_Cloud7 --repository-ids 5
+hammer -u admin -p changeme content-view add-repository --id 6 --organization Test_Cloud7 --repository-id 5
+echo Epel Content view
+hammer -u admin -p changeme content-view create --description "Epel View" --name "Epel" --organization Test_Cloud7 --repository-ids 6
+hammer -u admin -p changeme content-view add-repository --id 7 --organization Test_Cloud7 --repository-id 6
 
 # Create a Version the Views
 #
 # hammer -u admin -p changeme content-view list --organization Test_Cloud7
-#----------------|---------------------------|---------------------------|-----------|---------------
-#CONTENT VIEW ID | NAME                      | LABEL                     | COMPOSITE | REPOSITORY IDS
-#----------------|---------------------------|---------------------------|-----------|---------------
-#3               | Puppet                    | Puppet                    |           | 1             
-#2               | Default Organization View | Default_Organization_View |           |               
-#5               | Foreman                   | Foreman                   |           | 4             
-#4               | CentOS Base               | CentOS_Base               |           | 3, 2          
-#----------------|---------------------------|---------------------------|-----------|---------------
+#----------------|---------------------------|--------------------------------------|-----------|---------------
+#CONTENT VIEW ID | NAME                      | LABEL                                | COMPOSITE | REPOSITORY IDS
+#----------------|---------------------------|--------------------------------------|-----------|---------------
+#2               | Default Organization View | 08ea93a9-f36c-43f6-8ea4-421e52f7db08 |           |               
+#3               | Puppet                    | Puppet                               |           |               
+#4               | CentOS Base               | CentOS_Base                          |           |               
+#5               | Foreman                   | Foreman                              |           |               
+#6               | Subscription              | Subscription                         |           |               
+#7               | Epel                      | Epel                                 |           |               
+#----------------|---------------------------|--------------------------------------|-----------|---------------
 
 echo "$(date) Start Publish Views" >> /root/Sat.install.log
 echo Puppet Content View Publish version 1
@@ -132,6 +151,11 @@ echo CentOS Content View Publish version 1
 hammer -u admin -p changeme content-view publish --id 4
 echo Foreman Content view Publish version 1
 hammer -u admin -p changeme content-view publish --id 5
+echo Subscription Mgmt Content view Publish version 1
+hammer -u admin -p changeme content-view publish --id 6
+echo Epel Content view Publish version 1
+hammer -u admin -p changeme content-view publish --id 7
+
 
 # Promote the View
 # hammer -u admin -p changeme lifecycle-environment list --organization Test_Cloud7
@@ -160,6 +184,12 @@ hammer -u admin -p changeme content-view version promote --environment-id 4 --id
 echo Foreman View -> Test -> Prod
 hammer -u admin -p changeme content-view version promote --environment-id 3 --id 5
 hammer -u admin -p changeme content-view version promote --environment-id 4 --id 5
+echo SubsMgmg View -> Test -> Prod
+hammer -u admin -p changeme content-view version promote --environment-id 3 --id 6
+hammer -u admin -p changeme content-view version promote --environment-id 4 --id 6
+echo Epel View -> Test -> Prod
+hammer -u admin -p changeme content-view version promote --environment-id 3 --id 7
+hammer -u admin -p changeme content-view version promote --environment-id 4 --id 7
 
 echo "$(date) Start Configure Networks" >> /root/Sat.install.log
 echo Create Default Networks
