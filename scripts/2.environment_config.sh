@@ -50,23 +50,65 @@ hammer -u admin -p changeme product list --organization Test_Cloud7
 #5  | Epel         | EPEL Repos         | Test_Cloud7  | 0            | not_synced
 #---|--------------|--------------------|--------------|--------------|-----------
 
+# Create Sync Plan
+hammer -u admin -p changeme sync-plan create --description "Daily Sync 03:00 AM" --interval daily --name "Daily 3A" --sync-date "2014-05-01 03:00:00" --organization Test_Cloud7
+
 # Add Repos to Products
 echo "$(date) Start Defining Repos" >> /root/Sat.install.log
 # Puppet
+echo "$(date)   Puppet" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Puppet el 6.5 x86_64"  --product Puppet --publish-via-http true --url "http://yum.puppetlabs.com/el/6.5/products/x86_64" 
-# CentOS
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync Puppet
+hammer -u admin -p changeme repository synchronize --id 1
+echo "$(date)     Synch Finish" >> /root/Sat.install.log
+
+# CentOS x86_64
+echo "$(date)   CentOS x86_64" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 x86_64"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/x86_64" 
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 i386"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/i386" 
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync CentOS x86_64
+hammer -u admin -p changeme repository synchronize --id 2
+echo "$(date)     Sync Finish" >> /root/Sat.install.log
+
+# CentOS i386
+echo "$(date)   CentOS i386" >> /root/Sat.install.log
+hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 i386"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/i386"
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync CentOS i386
+hammer -u admin -p changeme repository synchronize --id 3
+echo "$(date)     Sync Finish" >> /root/Sat.install.log
+
 # Foreman
+echo "$(date)   Foreman" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Foreman Nightly"  --product Foreman --publish-via-http true --url "http://yum.theforeman.org/nightly/el6/x86_64/"
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync Foreman
+hammer -u admin -p changeme repository synchronize --id 4
+echo "$(date)     Sync Finish" >> /root/Sat.install.log
+
 # Subscription
+echo "$(date)   Subscription" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Subs x86_64"  --product Subscription --publish-via-http true --url "http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64" 
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync Subscription
+hammer -u admin -p changeme repository synchronize --id 5
+echo "$(date)     Sync Finish" >> /root/Sat.install.log
+
 # EPEL
+echo "$(date)   EPEL" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "EPEL x86_64"  --product Epel --publish-via-http true --url "http://dl.fedoraproject.org/pub/epel/6/x86_64" 
+# Syncrhonize the repositories
+echo "$(date)     Synch Start" >> /root/Sat.install.log
+echo Sync Epel
+hammer -u admin -p changeme repository synchronize --id 6
+echo "$(date)     Sync Finish" >> /root/Sat.install.log
 
-
-# Create Sync Plan
-hammer -u admin -p changeme sync-plan create --description "Daily Sync 03:00 AM" --interval daily --name "Daily 3A" --sync-date "2014-05-01 03:00:00" --organization Test_Cloud7
 
 # Assign Sync Plan to Products
 hammer -u admin -p changeme product set-sync-plan --name Puppet --organization Test_Cloud7 --sync-plan-id 1
@@ -87,28 +129,6 @@ hammer -u admin -p changeme product set-sync-plan --name Epel --organization Tes
 #5  | Subs x86_64          | Subscription | yum          | http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64
 #6  | EPEL x86_64          | Epel         | yum          | http://dl.fedoraproject.org/pub/epel/6/x86_64                                   
 #---|----------------------|--------------|--------------|---------------------------------------------------------------------------------
-
-
-# Syncrhonize the repositories
-echo "$(date) Start Repo Synch" >> /root/Sat.install.log
-echo "$(date)   Sync Puppet" >> /root/Sat.install.log
-echo Sync Puppet
-hammer -u admin -p changeme repository synchronize --id 1
-echo "$(date)   Sync CentOS i386" >> /root/Sat.install.log
-echo Sync CentOS i386
-hammer -u admin -p changeme repository synchronize --id 2
-echo "$(date)   Sync CentOS x86" >> /root/Sat.install.log
-echo Sync CentOS x86
-hammer -u admin -p changeme repository synchronize --id 3
-echo "$(date)   Sync Foreman" >> /root/Sat.install.log
-echo Sync Foreman
-hammer -u admin -p changeme repository synchronize --id 4
-echo "$(date)   Sync Subscription " >> /root/Sat.install.log
-echo Sync Subscription
-hammer -u admin -p changeme repository synchronize --id 5
-echo "$(date)   Sync Epel " >> /root/Sat.install.log
-echo Sync Epel
-hammer -u admin -p changeme repository synchronize --id 6
 
 
 # Add Content Views
