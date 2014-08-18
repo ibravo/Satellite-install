@@ -65,5 +65,5 @@ echo Change SELINUX=permissive with 'vim /etc/selinux/config'
 echo vim /etc/hosts and add FQDN to list
 
 
- /bin/bash /root/Satellite-install/scripts/2.environment_config.sh
+# /bin/bash /root/Satellite-install/scripts/2.environment_config.sh
 
