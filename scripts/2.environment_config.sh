@@ -38,7 +38,7 @@ hammer -u admin -p changeme product create --description "Subscription Repos" --
 hammer -u admin -p changeme product create --description "EPEL Repos" --name Epel --organization Test_Cloud7
 
 # Check Install
-hammer -u admin -p changeme product list --organization Test_Cloud7
+#hammer -u admin -p changeme product list --organization Test_Cloud7
 
 #---|--------------|--------------------|--------------|--------------|-----------
 #ID | NAME         | DESCRIPTION        | ORGANIZATION | REPOSITORIES | SYNC STATE
