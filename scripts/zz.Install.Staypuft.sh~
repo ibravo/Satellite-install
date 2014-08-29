@@ -1,20 +1,39 @@
 
-
 ==Install==
 yum install -y http://yum.theforeman.org/nightly/el6/x86_64/foreman-release.rpm
 yum -y localinstall http://mirror.pnl.gov/epel/6/x86_64/epel-release-6-8.noarch.rpm
 yum -y install centos-release-SCL
 yum -y install foreman-plugin-staypuft
-yum install foreman-installer-staypuft
+yum -y install foreman-installer-staypuft
 # echo /usr/share/foreman-installer/modules/foreman/manifests/remote_file.pp:6
 mkdir /var/lib/tftpboot
 mkdir /var/lib/tftpboot/boot
-# echo now modify the file: /opt/rh/ruby193/root/usr/share/gems/gems/staypuft-0.1.20/app/models/staypuft/deployment.rb
+yum -y update
+# echo modify iptables
+cat /proc/sys/net/ipv4/ip_forward
+# change net.ipv4.ip_forward from 0 to 1
+vi /etc/sysctl.conf
+sysctl -e -p /etc/sysctl.conf
 
-staypuft-installer --foreman-configure-epel-repo=true --foreman-plugin-discovery-install-images=true 
+vi /etc/hosts
+192.168.2.151	foreman.hq.ltg	foreman
+
+staypuft-installer --foreman-configure-epel-repo=true --foreman-plugin-discovery-install-images=true --foreman-admin-password="changeme"
+
+iptables -A FORWARD -i eth0 -j ACCEPT
+iptables -A FORWARD -o eth0 -j ACCEPT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+service iptables save
+vi /etc/iptables
+
+Update Centos7 mirror to 
+http://mirror.centos.org/centos/7/os/$arch
 
 
-app/models/staypuft/deployment.rb
+
+
+==============
+Line 277 aprox of file app/models/staypuft/deployment.rb
 
     def update_operating_system
       name = Setting[:base_hostgroup].include?('RedHat') ? 'RedHat' : 'CentOS'
