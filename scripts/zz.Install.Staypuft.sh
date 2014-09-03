@@ -5,9 +5,11 @@ yum -y localinstall http://mirror.pnl.gov/epel/6/x86_64/epel-release-6-8.noarch.
 yum -y install centos-release-SCL
 yum -y install foreman-plugin-staypuft
 yum -y install foreman-installer-staypuft
+yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 # echo /usr/share/foreman-installer/modules/foreman/manifests/remote_file.pp:6
 mkdir /var/lib/tftpboot
 mkdir /var/lib/tftpboot/boot
+yum install ruby193-rubygem-deface
 yum -y update
 # echo modify iptables
 cat /proc/sys/net/ipv4/ip_forward
@@ -15,9 +17,12 @@ cat /proc/sys/net/ipv4/ip_forward
 vi /etc/sysctl.conf
 sysctl -e -p /etc/sysctl.conf
 
+#Error on staypuft:
+update the staypuft.gemspec located at /opt/rh/ruby193/root/usr/share/gems/specifications/staypuft-0.3.0.gemspec and modify the 1.3.0 to 1.4.0
+
 vi /etc/hosts
 192.168.2.151	foreman.hq.ltg	foreman
-
+[SNAPSHOT DRIVE]
 staypuft-installer --foreman-configure-epel-repo=true --foreman-plugin-discovery-install-images=true --foreman-admin-password="changeme"
 
 iptables -A FORWARD -i eth0 -j ACCEPT
@@ -47,20 +52,11 @@ volgroup vg_root pv.01
 logvol  /  --vgname=vg_root  --size=1 --grow --name=lv_root
 EOF
 
+#Kickstart default: Post Installation setup
+yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+yum -y localinstall http://mirror.pnl.gov/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
 
 
-
-==============
-Line 277 aprox of file app/models/staypuft/deployment.rb
-
-    def update_operating_system
-      name = Setting[:base_hostgroup].include?('RedHat') ? 'RedHat' : 'CentOS'
-      self.hostgroup.operatingsystem = case platform
-                                       when Platform::RHEL6
-                                         Operatingsystem.where(name: name, major: '6', minor: '5').first
-                                       when Platform::RHEL7
-                                         Operatingsystem.where(name: name, major: '7', minor: '0').first
-                                       end or
-          raise 'missing Operatingsystem'
-
+=========
+eth0 => ens192, eth1 => ens224
 
