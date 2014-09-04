@@ -9,7 +9,7 @@ yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 # echo /usr/share/foreman-installer/modules/foreman/manifests/remote_file.pp:6
 mkdir /var/lib/tftpboot
 mkdir /var/lib/tftpboot/boot
-yum install ruby193-rubygem-deface
+yum -y install ruby193-rubygem-deface
 yum -y update
 # echo modify iptables
 cat /proc/sys/net/ipv4/ip_forward
@@ -53,9 +53,12 @@ logvol  /  --vgname=vg_root  --size=1 --grow --name=lv_root
 EOF
 
 #Kickstart default: Post Installation setup
+# yum -y localinstall http://mirror.pnl.gov/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
+yum -y localinstall http://mirror.centos.org/centos/7/extras/x86_64/Packages/epel-release-7-2.noarch.rpm
 yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-yum -y localinstall http://mirror.pnl.gov/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
+yum -y update
 
+repo --name=extras
 
 =========
 eth0 => ens192, eth1 => ens224
