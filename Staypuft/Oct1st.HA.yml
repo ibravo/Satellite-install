@@ -1,0 +1,1129 @@
+
+
+---
+deployment:
+  name: Oct1st
+  description: ! "oct1st\r\nIc3H0us32014"
+  ui_params:
+    amqp_provider: rabbitmq
+    networking: neutron
+    layout_name: High Availability Controllers / Compute
+    platform: rhel7
+    services:
+      nova:
+        network_manager: FlatDHCPManager
+        vlan_range: 
+        public_floating_range: 
+        private_fixed_range: 
+      neutron:
+        network_segmentation: vxlan
+        tenant_vlan_ranges: 
+      glance:
+        driver_backend: ceph
+        nfs_network_path: 
+      cinder:
+        backend_lvm: 'false'
+        backend_ceph: 'true'
+        backend_nfs: 'false'
+        backend_eqlx: 'false'
+        nfs_uri: 
+        rbd_secret_uuid: 5ee29612-1416-447c-bc54-8af12424fd7c
+        eqlxs: []
+      passwords:
+        mode: single
+        single_password: Ic3H0us32014
+      ceph:
+        fsid: 418b7f3b-8f90-47e0-994a-bd74a04b3199
+        volumes_key: 
+        images_key: 
+  puppet_params:
+    services:
+    - name: Neutron-compute
+      params:
+      - key: admin_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:admin) %>
+      - key: auth_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:keystone_admin_vip)
+          : d.network_query.controller_ip(''Admin API'') %>'
+      - key: ceilometer
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.non_ha? %>
+      - key: ceilometer_metering_secret
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.ceilometer_metering_secret %>
+      - key: ceilometer_user_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:ceilometer_user) %>
+      - key: cinder_backend_gluster
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: false
+      - key: cinder_backend_nfs
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.cinder.nfs_backend? %>
+      - key: enable_tunneling
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.enable_tunneling?.to_s %>
+      - key: glance_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:glance_private_vip)
+          : d.network_query.controller_ip(''Management'') %>'
+      - key: mysql_ca
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: /etc/ipa/ca.crt
+      - key: mysql_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:db_vip)
+          : d.network_query.controller_ip(''Management'') %>'
+      - key: neutron_core_plugin
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ${$quickstack::params::neutron_core_plugin}
+      - key: neutron_db_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:neutron_db) %>
+      - key: neutron_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:neutron_private_vip)
+          : d.network_query.controller_ip(''Management'') %>'
+      - key: neutron_user_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:neutron_user) %>
+      - key: nova_db_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:nova_db) %>
+      - key: nova_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= d = @host.deployment; d.ha? ? d.network_query.get_vip(:nova_public_vip)
+          : d.network_query.controller_ip(''Public API'') %>'
+      - key: nova_user_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.passwords.effective_value(:nova_user) %>
+      - key: ovs_bridge_mappings
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.compute_ovs_bridge_mappings(@host) %>
+      - key: ovs_bridge_uplinks
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.compute_ovs_bridge_uplinks(@host) %>
+      - key: ovs_tunnel_iface
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ! '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host)
+          : "" %>'
+      - key: ovs_tunnel_network
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ''
+      - key: ovs_tunnel_types
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.ovs_tunnel_types %>
+      - key: ovs_vlan_ranges
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.compute_vlan_ranges %>
+      - key: ovs_vxlan_udp_port
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: '4789'
+      - key: qpid_host
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ${$quickstack::params::qpid_host}
+      - key: qpid_password
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ${$quickstack::params::qpid_password}
+      - key: qpid_port
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: '5672'
+      - key: qpid_ssl_port
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: '5671'
+      - key: qpid_username
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: ${$quickstack::params::qpid_username}
+      - key: ssl
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: 'false'
+      - key: tenant_network_type
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: <%= @host.deployment.neutron.network_segmentation %>
+      - key: tunnel_id_ranges
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: 1:1000
+      - key: use_qemu_for_poc
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: 'false'
+      - key: verbose
+        role: Compute (Neutron)
+        puppetclass: quickstack::neutron::compute
+        value: 'true'
+    - name: Generic RHEL 7
+      params: []
+    - name: Ceph Storage (OSD) (node)
+      params: []
+    - name: HA (Controller)
+      params:
+      - key: fence_ipmilan_address
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: <%= @host.bmc_nic.ip if @host.bmc_nic && @host.bmc_nic.fencing_enabled?
+          %>
+      - key: fence_ipmilan_host_to_address
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: ! '[]'
+      - key: fence_ipmilan_hostlist
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: ''
+      - key: fence_ipmilan_interval
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: 60s
+      - key: fence_ipmilan_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: <%= @host.bmc_nic.password if @host.bmc_nic && @host.bmc_nic.fencing_enabled?
+          %>
+      - key: fence_ipmilan_username
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: <%= @host.bmc_nic.username if @host.bmc_nic && @host.bmc_nic.fencing_enabled?
+          %>
+      - key: fence_xvm_clu_iface
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: eth2
+      - key: fence_xvm_clu_network
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: ''
+      - key: fence_xvm_key_file_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: ''
+      - key: fence_xvm_manage_key_file
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: 'false'
+      - key: fencing_type
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: ! '<%= (@host.bmc_nic && @host.bmc_nic.fencing_enabled?) ? @host.bmc_nic.attrs["fencing_type"]
+          : "disabled" %>'
+      - key: pacemaker_cluster_members
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: <%= @host.deployment.network_query.controller_ips('Management').join('
+          ') %>
+      - key: pacemaker_cluster_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::common
+        value: openstack
+      - key: ceilometer_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:ceilometer_admin_vip) %>
+      - key: ceilometer_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ceilometer
+      - key: ceilometer_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:ceilometer_private_vip) %>
+      - key: ceilometer_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:ceilometer_public_vip) %>
+      - key: ceilometer_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:ceilometer_user) %>
+      - key: cinder_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:cinder_admin_vip) %>
+      - key: cinder_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:cinder_db) %>
+      - key: cinder_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: cinder
+      - key: cinder_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:cinder_private_vip) %>
+      - key: cinder_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:cinder_public_vip) %>
+      - key: cinder_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:cinder_user) %>
+      - key: cluster_control_ip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.network_query.controller_ips('Management').first
+          %>
+      - key: db_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: db
+      - key: db_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:db_vip) %>
+      - key: glance_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:glance_admin_vip) %>
+      - key: glance_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:glance_db) %>
+      - key: glance_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: glance
+      - key: glance_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:glance_private_vip) %>
+      - key: glance_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:glance_public_vip) %>
+      - key: glance_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:glance_user) %>
+      - key: heat_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_admin_vip) %>
+      - key: heat_auth_encryption_key
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.heat_auth_encrypt_key %>
+      - key: heat_cfn_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_cfn_admin_vip) %>
+      - key: heat_cfn_enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: heat_cfn_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: heat_cfn
+      - key: heat_cfn_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_cfn_private_vip) %>
+      - key: heat_cfn_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_cfn_public_vip) %>
+      - key: heat_cfn_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:heat_cfn_user) %>
+      - key: heat_cloudwatch_enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: heat_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:heat_db) %>
+      - key: heat_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: heat
+      - key: heat_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_private_vip) %>
+      - key: heat_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:heat_public_vip) %>
+      - key: heat_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:heat_user) %>
+      - key: horizon_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:horizon_admin_vip) %>
+      - key: horizon_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: horizon
+      - key: horizon_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:horizon_private_vip) %>
+      - key: horizon_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:horizon_public_vip) %>
+      - key: include_cinder
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_glance
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_heat
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_horizon
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_keystone
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_mysql
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_neutron
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.neutron_networking? %>
+      - key: include_nova
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_qpid
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'true'
+      - key: include_swift
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: 'false'
+      - key: keystone_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:keystone_admin_vip) %>
+      - key: keystone_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:keystone_db) %>
+      - key: keystone_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: keystone
+      - key: keystone_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:keystone_private_vip) %>
+      - key: keystone_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:keystone_public_vip) %>
+      - key: keystone_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:keystone_user) %>
+      - key: lb_backend_server_addrs
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.network_query.controller_ips('Management') %>
+      - key: lb_backend_server_names
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.network_query.controller_fqdns %>
+      - key: loadbalancer_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: loadbalancer
+      - key: loadbalancer_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:loadbalancer_vip) %>
+      - key: neutron
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.neutron_networking? %>
+      - key: neutron_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:neutron_admin_vip) %>
+      - key: neutron_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:neutron_db) %>
+      - key: neutron_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: neutron
+      - key: neutron_metadata_proxy_secret
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.neutron_metadata_proxy_secret %>
+      - key: neutron_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:neutron_private_vip) %>
+      - key: neutron_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:neutron_public_vip) %>
+      - key: neutron_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:neutron_user) %>
+      - key: nova_admin_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:nova_admin_vip) %>
+      - key: nova_db_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:nova_db) %>
+      - key: nova_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: nova
+      - key: nova_private_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:nova_private_vip) %>
+      - key: nova_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:nova_public_vip) %>
+      - key: nova_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.passwords.effective_value(:nova_user) %>
+      - key: private_iface
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+      - key: private_ip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.deployment.network_query.ip_for_host('Management', @host)
+          %>
+      - key: private_network
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+      - key: qpid_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: qpid
+      - key: qpid_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+      - key: qpid_port
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: '15672'
+      - key: qpid_username
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+      - key: qpid_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+      - key: swift_group
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: swift
+      - key: swift_public_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: <%= @host.network_query.get_vip(:swift_public_vip) %>
+      - key: swift_user_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::params
+        value: ''
+    - name: Keystone (HA)
+      params:
+      - key: admin_email
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: admin@hq.ltg
+      - key: admin_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: <%= @host.deployment.passwords.effective_value(:admin) %>
+      - key: admin_tenant
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: admin
+      - key: admin_token
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: <%= @host.deployment.passwords.effective_value(:keystone_admin_token)
+          %>
+      - key: ceilometer
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: cinder
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: db_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: keystone
+      - key: db_ssl
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'false'
+      - key: db_ssl_ca
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: ''
+      - key: db_type
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: mysql
+      - key: db_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: keystone
+      - key: debug
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'false'
+      - key: enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: glance
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: heat
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: heat_cfn
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'false'
+      - key: idle_timeout
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: '200'
+      - key: keystonerc
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: log_facility
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: LOG_USER
+      - key: nova
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+      - key: public_protocol
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: http
+      - key: region
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: RegionOne
+      - key: swift
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'false'
+      - key: token_driver
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: keystone.token.backends.sql.Token
+      - key: token_format
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: PKI
+      - key: use_syslog
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'false'
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::keystone
+        value: 'true'
+    - name: Load Balancer (HA)
+      params: []
+    - name: Memcached (HA)
+      params: []
+    - name: qpid (HA)
+      params:
+      - key: backend_port
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: '5672'
+      - key: config_file
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: /etc/qpidd.conf
+      - key: connection_backlog
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: '65535'
+      - key: haproxy_timeout
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: 120s
+      - key: log_to_file
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: UNSET
+      - key: manage_service
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: true
+      - key: max_connections
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: '65535'
+      - key: package_ensure
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: present
+      - key: package_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: qpid-cpp-server
+      - key: realm
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: QPID
+      - key: service_enable
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: true
+      - key: service_ensure
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: running
+      - key: service_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: qpidd
+      - key: worker_threads
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::qpid
+        value: '17'
+    - name: Glance (HA)
+      params:
+      - key: backend
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: <%= @host.deployment.glance.backend %>
+      - key: db_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: glance
+      - key: db_ssl
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: false
+      - key: db_ssl_ca
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: ''
+      - key: db_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: glance
+      - key: debug
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: false
+      - key: enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: true
+      - key: filesystem_store_datadir
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: /var/lib/glance/images/
+      - key: log_facility
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: LOG_USER
+      - key: pcmk_fs_device
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: <%= @host.deployment.glance.pcmk_fs_device %>
+      - key: pcmk_fs_dir
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: /var/lib/glance/images
+      - key: pcmk_fs_manage
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: <%= @host.deployment.glance.pcmk_fs_manage %>
+      - key: pcmk_fs_options
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: <%= @host.deployment.glance.pcmk_fs_options %>
+      - key: pcmk_fs_type
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: <%= @host.deployment.glance.pcmk_fs_type %>
+      - key: pcmk_swift_is_local
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: true
+      - key: rbd_store_pool
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: images
+      - key: rbd_store_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: ''
+      - key: sql_idle_timeout
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: '3600'
+      - key: swift_store_auth_address
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: http://127.0.0.1:5000/v2.0/
+      - key: swift_store_key
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: ''
+      - key: swift_store_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: ''
+      - key: use_syslog
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: false
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::glance
+        value: 'true'
+    - name: Nova (HA)
+      params:
+      - key: auto_assign_floating_ip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: 'true'
+      - key: db_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: nova
+      - key: db_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: nova
+      - key: default_floating_pool
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: nova
+      - key: force_dhcp_release
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: 'false'
+      - key: image_service
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: nova.image.glance.GlanceImageService
+      - key: memcached_port
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: '11211'
+      - key: multi_host
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: 'true'
+      - key: neutron_metadata_proxy_secret
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: <%= @host.deployment.passwords.neutron_metadata_proxy_secret %>
+      - key: qpid_heartbeat
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: '60'
+      - key: rpc_backend
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: nova.openstack.common.rpc.impl_qpid
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::nova
+        value: 'true'
+    - name: Heat (HA)
+      params:
+      - key: db_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: heat
+      - key: db_ssl
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: false
+      - key: db_ssl_ca
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: ''
+      - key: db_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: heat
+      - key: debug
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: false
+      - key: enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: true
+      - key: log_facility
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: LOG_USER
+      - key: qpid_heartbeat
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: '60'
+      - key: use_syslog
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: false
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::heat
+        value: 'true'
+    - name: Cinder (HA)
+      params:
+      - key: db_name
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: cinder
+      - key: db_ssl
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: false
+      - key: db_ssl_ca
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: ''
+      - key: db_user
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: cinder
+      - key: debug
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: false
+      - key: enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: true
+      - key: glusterfs_shares
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: ! '[]'
+      - key: log_facility
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: LOG_USER
+      - key: nfs_mount_options
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: nosharecache
+      - key: nfs_shares
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: ! '["<%= @host.deployment.cinder.nfs_uri %>"]'
+      - key: qpid_heartbeat
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: '60'
+      - key: use_syslog
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: false
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: 'true'
+      - key: volume
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: true
+      - key: volume_backend
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::cinder
+        value: iscsi
+    - name: Swift (HA)
+      params:
+      - key: memcached_port
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::swift
+        value: '11211'
+      - key: swift_internal_vip
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::swift
+        value: ''
+      - key: swift_shared_secret
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::swift
+        value: <%= @host.deployment.passwords.swift_shared_secret %>
+      - key: swift_storage_device
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::swift
+        value: ''
+      - key: swift_storage_ips
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::swift
+        value: ! '[]'
+    - name: Horizon (HA)
+      params:
+      - key: horizon_ca
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: /etc/ipa/ca.crt
+      - key: horizon_cert
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: /etc/pki/tls/certs/PUB_HOST-horizon.crt
+      - key: horizon_key
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: /etc/pki/tls/private/PUB_HOST-horizon.key
+      - key: keystone_default_role
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: _member_
+      - key: memcached_port
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: '11211'
+      - key: secret_key
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: <%= @host.deployment.passwords.horizon_secret_key %>
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::horizon
+        value: 'true'
+    - name: Galera (HA)
+      params: []
+    - name: Mysql (HA)
+      params:
+      - key: mysql_root_password
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::mysql
+        value: ''
+      - key: storage_device
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::mysql
+        value: ''
+      - key: storage_options
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::mysql
+        value: ''
+      - key: storage_type
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::mysql
+        value: ''
+    - name: Neutron (HA)
+      params:
+      - key: enable_tunneling
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: <%= @host.deployment.neutron.enable_tunneling?.to_s %>
+      - key: enabled
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: true
+      - key: external_network_bridge
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: br-ex
+      - key: ovs_bridge_mappings
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: <%= @host.deployment.neutron.networker_ovs_bridge_mappings(@host) %>
+      - key: ovs_bridge_uplinks
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: <%= @host.deployment.neutron.networker_ovs_bridge_uplinks(@host) %>
+      - key: ovs_tunnel_iface
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: ! '<%= n = @host.deployment.neutron; n.enable_tunneling? ? n.tenant_iface(@host)
+          : "" %>'
+      - key: ovs_tunnel_network
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: ''
+      - key: ovs_tunnel_types
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: <%= @host.deployment.neutron.ovs_tunnel_types %>
+      - key: ovs_vlan_ranges
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: <%= @host.deployment.neutron.networker_vlan_ranges %>
+      - key: tenant_network_type
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: vlan
+      - key: tunnel_id_ranges
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: 1:1000
+      - key: verbose
+        role: HA Controller
+        puppetclass: quickstack::pacemaker::neutron
+        value: 'true'

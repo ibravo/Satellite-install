@@ -5,11 +5,10 @@ yum -y localinstall http://mirror.pnl.gov/epel/6/x86_64/epel-release-6-8.noarch.
 yum -y install centos-release-SCL
 yum -y install foreman-plugin-staypuft
 yum -y install foreman-installer-staypuft
-yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+# yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 # echo /usr/share/foreman-installer/modules/foreman/manifests/remote_file.pp:6
-mkdir /var/lib/tftpboot
-mkdir /var/lib/tftpboot/boot
-yum -y install ruby193-rubygem-deface
+mkdir -p /var/lib/tftpboot/boot
+#yum -y install ruby193-rubygem-deface
 yum -y update
 # echo modify iptables
 cat /proc/sys/net/ipv4/ip_forward
@@ -55,11 +54,35 @@ EOF
 #Kickstart default: Post Installation setup
 # yum -y localinstall http://mirror.pnl.gov/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
 yum -y localinstall http://mirror.centos.org/centos/7/extras/x86_64/Packages/epel-release-7-2.noarch.rpm
-yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-yum -y update
+# yum -y localinstall http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+yum -y install update
+yum -y install puppet
 
 repo --name=extras
 
 =========
 eth0 => ens192, eth1 => ens224
+=========
+
+Description
+The modules are installed from  foreman-installer-staypuft / hooks / lib / install_modules.sh by using the following commands in an empty directory:
+
+mkdir modules
+echo "Cloning repositories"
+git clone https://github.com/redhat-openstack/astapor
+git clone --recursive https://github.com/redhat-openstack/openstack-puppet-modules
+# Used to define a version
+#ASTAPOR_VERSION="origin/1_0_stable"
+#OPENSTACK_MODULES_VERSION="origin/havana"
+#pushd astapor
+#git reset --hard $ASTAPOR_VERSION
+#popd
+#pushd openstack-puppet-modules
+#git reset --hard $OPENSTACK_MODULES_VERSION
+#popd
+mv astapor/puppet/modules/* modules
+mv openstack-puppet-modules/* modules
+rm -rf astapor openstack-puppet-modules
+mv modules/* /etc/puppet..../environment/production/...
+
 

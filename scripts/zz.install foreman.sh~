@@ -37,8 +37,7 @@ foreman-installer \
 --foreman-proxy-dns-reverse="6.168.192.in-addr.arpa" \
 --foreman-proxy-dns-zone="hq.ltg" \
 --enable-foreman-plugin-discovery \
---foreman-plugin-discovery-install-images=true 
-
+--foreman-plugin-discovery-install-images=true \
 --foreman-proxy-puppetca \
 --foreman-proxy-puppetrun \
 --foreman-proxy-register-in-foreman \

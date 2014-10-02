@@ -64,8 +64,8 @@ echo Sync Puppet
 hammer -u admin -p changeme repository synchronize --id 1
 echo "$(date)     Synch Finish" >> /root/Sat.install.log
 
-# CentOS x86_64
-echo "$(date)   CentOS x86_64" >> /root/Sat.install.log
+# CentOS 6 x86_64
+echo "$(date)   CentOS 6 x86_64" >> /root/Sat.install.log
 hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 x86_64"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/x86_64" 
 # Syncrhonize the repositories
 echo "$(date)     Synch Start" >> /root/Sat.install.log
@@ -73,12 +73,12 @@ echo Sync CentOS x86_64
 hammer -u admin -p changeme repository synchronize --id 2
 echo "$(date)     Sync Finish" >> /root/Sat.install.log
 
-# CentOS i386
-echo "$(date)   CentOS i386" >> /root/Sat.install.log
-hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 6 i386"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/6/os/i386"
+# CentOS 7 x86_64
+echo "$(date)   CentOS 7 x86_64" >> /root/Sat.install.log
+hammer -u admin -p changeme repository create --organization Test_Cloud7 --content-type yum --name  "Centos 7 x86_64"  --product CentOS --publish-via-http true --url "http://mirror.centos.org/centos/7/os/x86_64"
 # Syncrhonize the repositories
 echo "$(date)     Synch Start" >> /root/Sat.install.log
-echo Sync CentOS i386
+echo Sync CentOS 7 x86_64
 hammer -u admin -p changeme repository synchronize --id 3
 echo "$(date)     Sync Finish" >> /root/Sat.install.log
 
@@ -124,7 +124,7 @@ hammer -u admin -p changeme product set-sync-plan --name Epel --organization Tes
 #---|----------------------|--------------|--------------|---------------------------------------------------------------------------------
 #1  | Puppet el 6.5 x86_64 | Puppet       | yum          | http://yum.puppetlabs.com/el/6.5/products/x86_64                                
 #2  | Centos 6 x86_64      | CentOS       | yum          | http://mirror.centos.org/centos/6/os/x86_64                                     
-#3  | Centos 6 i386        | CentOS       | yum          | http://mirror.centos.org/centos/6/os/i386                                       
+#3  | Centos 7 x86_64      | CentOS       | yum          | http://mirror.centos.org/centos/7/os/x86_64                                       
 #4  | Foreman Nightly      | Foreman      | yum          | http://yum.theforeman.org/nightly/el6/x86_64/                                   
 #5  | Subs x86_64          | Subscription | yum          | http://repos.fedorapeople.org/repos/candlepin/subscription-manager/epel-6/x86_64
 #6  | EPEL x86_64          | Epel         | yum          | http://dl.fedoraproject.org/pub/epel/6/x86_64                                   
@@ -137,9 +137,9 @@ echo Puppet Content View
 hammer -u admin -p changeme content-view create --description "Puppet View" --name "Puppet" --organization Test_Cloud7 --repository-ids 1
 hammer -u admin -p changeme content-view add-repository --id 3 --organization Test_Cloud7 --repository-id 1
 echo CentOS Content View
-hammer -u admin -p changeme content-view create --description "CentOS x64 View" --name "CentOS_x64" --organization Test_Cloud7 --repository-ids 2
+hammer -u admin -p changeme content-view create --description "CentOS 6 x64 View" --name "CentOS_6_x64" --organization Test_Cloud7 --repository-ids 2
 hammer -u admin -p changeme content-view add-repository --id 4 --organization Test_Cloud7 --repository-id 2
-hammer -u admin -p changeme content-view create --description "CentOS i386 View" --name "CentOS_i386" --organization Test_Cloud7 --repository-ids 3
+hammer -u admin -p changeme content-view create --description "CentOS 7 x64 View" --name "CentOS_7_x64" --organization Test_Cloud7 --repository-ids 3
 hammer -u admin -p changeme content-view add-repository --id 5 --organization Test_Cloud7 --repository-id 3
 echo Foreman Content view
 hammer -u admin -p changeme content-view create --description "Foreman View" --name "Foreman" --organization Test_Cloud7 --repository-ids 4
@@ -159,8 +159,8 @@ hammer -u admin -p changeme content-view add-repository --id 8 --organization Te
 #----------------|---------------------------|--------------------------------------|-----------|---------------
 #2               | Default Organization View | c27f0122-359b-4576-a271-5627b013d2aa |           |               
 #3               | Puppet                    | Puppet                               |           | 1             
-#4               | CentOS_x64                | CentOS_x64                           |           | 2             
-#5               | CentOS_i386               | CentOS_i386                          |           | 3             
+#4               | CentOS_6_x64              | CentOS 6 x64                         |           | 2             
+#5               | CentOS_7_x64              | CentOS 7 x64                         |           | 3             
 #6               | Foreman                   | Foreman                              |           | 4             
 #7               | Subscription              | Subscription                         |           | 5             
 #8               | Epel                      | Epel                                 |           | 6             
@@ -202,10 +202,10 @@ echo "$(date) Start Promote Views" >> /root/Sat.install.log
 echo Puppet View -> Test -> Prod
 hammer -u admin -p changeme content-view version promote --environment-id 3 --id 3
 hammer -u admin -p changeme content-view version promote --environment-id 4 --id 3
-echo CentOS x64 View -> Test -> Prod
+echo CentOS 6 x64 View -> Test -> Prod
 hammer -u admin -p changeme content-view version promote --environment-id 3 --id 4
 hammer -u admin -p changeme content-view version promote --environment-id 4 --id 4
-echo CentOS i386 View -> Test -> Prod
+echo CentOS 7 x64 View -> Test -> Prod
 hammer -u admin -p changeme content-view version promote --environment-id 3 --id 5
 hammer -u admin -p changeme content-view version promote --environment-id 4 --id 5
 echo Foreman View -> Test -> Prod
