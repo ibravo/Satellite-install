@@ -83,5 +83,6 @@ git clone --recursive https://github.com/redhat-openstack/openstack-puppet-modul
 mv astapor/puppet/modules/* modules
 mv openstack-puppet-modules/* modules
 rm -rf astapor openstack-puppet-modules
-mv modules/* /etc/puppet..../environment/production/...
+mv modules/* /etc/puppet/environments/production/modules
+
 
