@@ -21,6 +21,9 @@ update the staypuft.gemspec located at /opt/rh/ruby193/root/usr/share/gems/speci
 
 vi /etc/hosts
 192.168.2.151	foreman.hq.ltg	foreman
+
+add katello to /var/named/dynamic/db.hq.ltg
+
 [SNAPSHOT DRIVE]
 staypuft-installer --foreman-configure-epel-repo=true --foreman-plugin-discovery-install-images=true --foreman-admin-password="changeme"
 

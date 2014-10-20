@@ -20,15 +20,3 @@ yum install subscription-manager
 yum install katello-agent
 yum -y --nogpgcheck install http://katello.hq.ltg/pub/katello-ca-consumer-katello.hq.ltg-1.0-1.noarch.rpm
 
-
-service named restart
-service dhcpd restart
-service foreman-proxy restart
-
-
-/var/log/messages
-Oct  9 03:08:10 puppet named[13765]: client 127.0.0.1#32084: updating zone 'hq.ltg/IN': adding an RR at 'mac002481fc5d32.hq.ltg' A
-Oct  9 03:08:10 puppet named[13765]: client 127.0.0.1#55104: updating zone '6.168.192.in-addr.arpa/IN': adding an RR at '160.6.168.192.in-addr.arpa' PTR
-
-
-
