@@ -1,0 +1,14 @@
+[ceph-giant]
+name=Ceph noarch packages
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Subscription/Ceph_Giant_RH7
+enabled=1
+gpgcheck=0
+type=rpm-md
+
+[ceph-deploy]
+name=Ceph deploy packages
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Subscription/ceph-deploy_1_5_19_rhel7
+enabled=1
+gpgcheck=0
+type=rpm-md
+
