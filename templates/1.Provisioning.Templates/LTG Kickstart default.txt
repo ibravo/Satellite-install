@@ -1,0 +1,235 @@
+
+
+<%#
+kind: provision
+name: LTG Kickstart default
+oses:
+- CentOS 6
+- CentOS 7
+%>
+<%
+  rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
+  os_major = @host.operatingsystem.major.to_i
+  realm_compatible = (@host.operatingsystem.name == "Fedora" && os_major >= 20) || (rhel_compatible && os_major >= 7)
+  # safemode renderer does not support unary negation
+  realm_incompatible = (@host.operatingsystem.name == "Fedora" && os_major < 20) || (rhel_compatible && os_major < 7)
+  pm_set = @host.puppetmaster.empty? ? false : true
+  puppet_enabled = pm_set || @host.params['force-puppet']
+%>
+
+install
+<%= @mediapath %>
+lang en_US.UTF-8
+selinux --enforcing
+keyboard us
+skipx
+
+<% subnet = @host.subnet -%>
+<% dhcp = subnet.dhcp_boot_mode? -%>
+network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{[subnet.dns_primary, subnet.dns_secondary].select(&:present?).join(',')}" %> --device=<%= @host.mac -%> --hostname <%= @host %>
+
+rootpw --iscrypted <%= root_pass %>
+firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
+authconfig --useshadow --passalgo=sha256 --kickstart
+timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
+
+<% if rhel_compatible && os_major > 4 -%>
+services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
+<% if os_major = 7 -%>
+repo --name=LTG-CentOS --baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/Centos_7_x86_64/
+repo --name=LTG-CentOSP --baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/centosplus_x86_64/
+repo --name=LTG-CentOSe --baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/extras_x86_64/
+repo --name=LTG-CentOSu --baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/updates_x86_64/
+repo --name=LTG-Epel    --baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Epel_7/Epel_7_x86_64/
+<% end -%>
+<% end -%>
+
+<% if realm_compatible && @host.info["parameters"]["realm"] && @host.otp && @host.realm -%>
+realm join --one-time-password='<%= @host.otp %>' <%= @host.realm %>
+<% end -%>
+
+
+
+# Enable Puppet and EPEL
+<% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+<% elsif rhel_compatible && os_major > 4 -%>
+#repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+<% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+<% end -%>
+<% end -%>
+
+bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
+
+<% if @dynamic -%>
+%include /tmp/diskpart.cfg
+<% else -%>
+<%= @host.diskLayout %>
+<% end -%>
+
+text
+reboot
+
+%packages --ignoremissing
+yum
+dhclient
+ntp
+wget
+@Core
+epel-release
+<% if puppet_enabled %>
+puppet
+<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+puppetlabs-release
+<% end -%>
+<% end -%>
+%end
+
+<% if @dynamic -%>
+%pre
+<%= @host.diskLayout %>
+%end
+<% end -%>
+
+%post --nochroot
+exec < /dev/tty3 > /dev/tty3
+#changing to VT 3 so that we can see whats going on....
+/usr/bin/chvt 3
+(
+cp -va /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
+/usr/bin/chvt 1
+) 2>&1 | tee /mnt/sysimage/root/install.postnochroot.log
+%end
+
+%post
+logger "Starting anaconda <%= @host %> postinstall"
+exec < /dev/tty3 > /dev/tty3
+#changing to VT 3 so that we can see whats going on....
+/usr/bin/chvt 3
+(
+##   snippet 'kickstart_networking_setup'
+##   snippet 'custom_deployment_repositories' %>
+
+# get name of provisioning interface
+PROVISION_IFACE=$(ip route  | awk '$1 == "default" {print $5}' | head -1)
+echo "found provisioning interface = $PROVISION_IFACE"
+
+<% if @host.hostgroup.to_s.include?("Controller") %>
+echo "setting DEFROUTE=no on $PROVISION_IFACE"
+sed -i '
+    /DEFROUTE/ d
+    $ a\DEFROUTE=no
+' /etc/sysconfig/network-scripts/ifcfg-$PROVISION_IFACE
+<% end -%>
+
+#update local time
+echo "updating system time"
+/usr/sbin/ntpdate -sub <%= @host.params['ntp-server'] || '0.fedora.pool.ntp.org' %>
+/usr/sbin/hwclock --systohc
+
+# setup SSH key for root user
+<%= snippet 'ssh_public_key' %>
+
+<% if realm_incompatible && @host.info["parameters"]["realm"] && @host.otp && @host.realm && @host.realm.realm_type == "Red Hat Directory Server" -%>
+<%= snippet "freeipa_register" %>
+<% end -%>
+
+## LTG Add to snippet later
+cat >/etc/yum.repos.d/LTG-CentOS.repo <<EOF
+# LTG-CentOS 
+# Place this file in your /etc/yum.repos.d/ directory
+[LTG-CentOS]
+name=LTG CentOS
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/Centos_7_x86_64/
+enabled=1
+gpgcheck=0
+
+[LTG-CentOSPlus]
+name=LTG-CentOSP
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/centosplus_x86_64/
+enabled=1
+gpgcheck=0
+
+[LTG-CentOSExtras]
+name=LTG-CentOSe
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/extras_x86_64/
+enabled=1
+gpgcheck=0
+
+[LTG-Updates]
+name=LTG-CentOSu 
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/updates_x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+
+cat >/etc/yum.repos.d/LTG-submgr.repo <<EOF
+# LTG-submgr 
+# Place this file in your /etc/yum.repos.d/ directory
+[LTG-submgr]
+name=LTG-submgr
+baseurl=http://satellite.hq.ltg/pulp/repos/Test_Cloud7/Prod/CentOS_Full/custom/CentOS/SubsManager/
+enabled=0
+gpgcheck=0
+EOF
+
+cat >/etc/yum.repos.d/LTG-puppet.repo <<EOF
+# LTG-puppet 
+# Place this file in your /etc/yum.repos.d/ directory
+[LTG-puppet]
+name=LTG-puppet
+baseurl=http://satellite.hq.ltg/pulp/repos/Test_Cloud7/Prod/Puppet/custom/Puppet/Puppet_el_6_5_x86_64/
+enabled=0
+gpgcheck=0
+EOF
+
+cat >/etc/yum.repos.d/LTG-Epel.repo <<EOF
+# LTG-Epel 
+# Place this file in your /etc/yum.repos.d/ directory
+[LTG-Epel]
+name=LTG-Epel
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Epel_7/Epel_7_x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+# Remove all Base repos before updating
+rm -f /etc/yum.repos.d/Cent*
+rm -f /etc/yum.repos.d/epel*
+
+EOF
+
+# update all the base packages from the updates repository
+yum -t -y -e 0 update
+
+# ensure firewalld is absent (BZ#1125075)
+yum -t -y -e 0 remove firewalld
+
+<% if puppet_enabled %>
+echo "Configuring puppet"
+cat > /etc/puppet/puppet.conf << EOF
+<%= snippet 'puppet.conf' %>
+EOF
+
+# Setup puppet to run on system reboot
+/sbin/chkconfig --level 345 puppet on
+
+/usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+
+<% end -%>
+
+sync
+
+# Inform the build system that we are done.
+echo "Informing Foreman that we are built"
+wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
+# Sleeping an hour for debug
+) 2>&1 | tee /root/install.post.log
+exit 0
+
+%end
