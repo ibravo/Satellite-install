@@ -1,3 +1,12 @@
+It only took two minutes to change my PXE Linux provisioning template to incorporate this change and boot the 
+old hardware using CentOS 7:
+
+default linux
+label linux
+kernel <%= @kernel %>
+append initrd=<%= @initrd %> inst.dd=http://katello/pulp/repos/Organization/Library/custom/Product/ElRepo_C7_x86_64/kmod-cciss-3.6.26-1.el7.elrepo.x86_64.rpm ks=<%= foreman_url('provision')%> network ks.sendmac 
+
+
 How to Unpack and Rebuild initrd.img or initramfs.img
 http://www.xensoft.com/content/how-unpack-and-rebuild-initrdimg-or-initramfsimg
 
