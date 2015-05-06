@@ -1,0 +1,103 @@
+<%#
+kind: snippet
+name: LTG_Repos
+%>
+# Configures LTG_Repos
+rm -f /etc/yum.repos.d/*
+
+#cat <<EOF> /etc/yum.repos.d/subsmanager.repo
+#[subsmanager]
+#name=LTG Subscription Manager
+#baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Subscription/Subs_x86_64/
+#enabled=1
+#gpgcheck=0
+
+#[katello-agent]
+#name=Katello Agent
+#baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Subscription/Katello_Client_x86_64/
+#enabled=1
+#gpgcheck=0
+
+#[katello-server]
+#name=Katello Server
+#baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Subscription/Katello_Server_x86_64/
+#enabled=1
+#gpgcheck=0
+#EOF
+
+cat <<EOF> /etc/yum.repos.d/Epel.repo
+[Epel]
+name=LTG Epel
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Epel_7/Epel_7_x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+cat <<EOF> /etc/yum.repos.d/CentOS.repo
+[CentOS]
+name=LTG CentOS 7
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/Centos_7_x86_64/
+enabled=1
+gpgcheck=0
+
+[C7_Updates]
+name=LTG CentOS 7 Updates
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/updates_x86_64/
+enabled=1
+gpgcheck=0
+
+[C7_Extras]
+name=LTG CentOS 7 Extras
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/extras_x86_64/
+enabled=1
+gpgcheck=0
+
+[C7_CentosPlus]
+name=LTG CentOS 7 CentosPlus
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/centosplus_x86_64/
+enabled=1
+gpgcheck=0
+
+[C7_FastTrack]
+name=LTG CentOS 7 Fast Track
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/CentOS7/fasttrack_x86_64/
+enabled=1
+gpgcheck=0
+
+EOF
+
+#cat <<EOF> /etc/yum.repos.d/GlusterRepo.repo
+#[glusterfs-epel]
+#name=GlusterFS is a clustered file-system of scaling to several petabytes.
+#baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Gluster/Gluster_x86_64
+#enabled=1
+#gpgcheck=0
+#EOF
+
+#cat <<EOF> /etc/yum.repos.d/PuppetLabs.repo
+#[PuppetLabs]
+#name=PuppetLabs for CentOS 6 Repo 
+#baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/Puppet/Puppet_el_6_5_x86_64/
+#enabled=1
+#gpgcheck=0
+#EOF
+
+cat <<EOF> /etc/yum.repos.d/OpenStackRepo.repo
+[OpenStack_Juno]
+name=OpenStack Juno for CentOS 7 Repo 
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/OpenStack_Juno/Openstack_Juno_epel-7/
+enabled=1
+gpgcheck=0
+EOF
+
+cat <<EOF> /etc/yum.repos.d/HP_SPP.repo
+[El_Repo]
+name=El Repo mirror
+baseurl=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/custom/HP_SPP/HP_Centos7/
+enabled=0
+gpgcheck=0
+EOF
+
+
+yum -t -y -e 0 update
+

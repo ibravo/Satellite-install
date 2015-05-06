@@ -1,0 +1,32 @@
+<%#
+kind: PXELinux
+name: Kickstart default PXELinux
+oses:
+- CentOS 4
+- CentOS 5
+- CentOS 6
+- CentOS 7
+- Fedora 16
+- Fedora 17
+- Fedora 18
+- Fedora 19
+- Fedora 20
+- RedHat 4
+- RedHat 5
+- RedHat 6
+- RedHat 7
+%>
+default linux
+label linux
+kernel <%= @kernel %>
+<% if @host.operatingsystem.name == 'Fedora' and @host.operatingsystem.major.to_i > 16 -%>
+append initrd=<%= @initrd %> ks=<%= foreman_url('provision')%> ks.device=bootif network ks.sendmac
+<% elsif @host.operatingsystem.name != 'Fedora' and @host.operatingsystem.major.to_i >= 7 -%>
+#append initrd=<%= @initrd %> ks=<%= foreman_url('provision')%> hpsa.hpsa_allow_any=1 hpsa.hpsa_simple_mode=1 network ks.sendmac  
+#append initrd=<%= @initrd %> ks=<%= foreman_url('provision')%> hpsa.hpsa_allow_any=1 network ks.sendmac  
+append initrd=<%= @initrd %> inst.dd=http://katello.hq.ltg/pulp/repos/LTG_Federal/Library/custom/HP_SPP/ElRepo_C7_x86_64/kmod-cciss-3.6.26-1.el7.elrepo.x86_64.rpm ks=<%= foreman_url('provision')%> network ks.sendmac  
+<% else -%>
+append initrd=<%= @initrd %> ks=<%= foreman_url('provision')%> ksdevice=bootif network kssendmac
+<% end -%>
+IPAPPEND 2
+

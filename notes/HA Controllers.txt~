@@ -1,0 +1,5 @@
+1. 3 Controllers
+2. Updated Katello Centos 6 Base repository (delete the old one)
+3. Puppet quickstack::pacemaker::common required to include quickstac::pacemaker::params and to add neutron_metadata_proxy_secret with a default password. Used Ic3H0us32014.
+
+

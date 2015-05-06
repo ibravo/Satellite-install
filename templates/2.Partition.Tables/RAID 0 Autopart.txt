@@ -1,0 +1,16 @@
+<%#
+kind: ptable
+name: RAID 0 Autopart
+HP Machines
+%>
+
+###############################################################
+#zerombr
+bootloader --location=mbr --driveorder=cciss/c0d0 --append="crashkernel=auto rhgb quiet"
+
+#clearpart --all --initlabel
+clearpart --drives=cciss/c0d0 --all --initlabel
+
+autopart
+
+
